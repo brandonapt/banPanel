@@ -14,7 +14,7 @@ import fetch from 'cross-fetch'
 const cookieParser = require('cookie-parser');
 import cors from 'cors';
 const { URLSearchParams } = require('url');
-import { place, url, clientId, clientSecret, roleId, guildId, sessionSecret } from "./config";
+import { place, url, clientId, clientSecret, roleId, guildId, sessionSecret, adminRoleId } from "./config";
 import noblox, { getIdFromUsername, getPlayerInfo, getPlayerThumbnail } from "noblox.js";
 import { createInitialSiteUser, unbanUserViaId } from "./database";
 import { generateRandomString } from "./utils";
@@ -64,6 +64,23 @@ async function checkPermissions(passport, id) {
     const roles = json.roles
     for (const i in roles) {
         if (roles[i] === roleId) { 
+            return true
+        }
+    } 
+    return false
+}
+
+async function checkAdminPermissions(passport, id) {
+    const raw = await fetch(API_ENDPOINT + `/users/@me/guilds/${guildId}/member`, {
+        headers: {
+            'Authorization': 'Bearer ' + passport
+        }
+    })
+
+    const json = await raw.json()
+    const roles = json.roles
+    for (const i in roles) {
+        if (roles[i] === adminRoleId) { 
             return true
         }
     } 
@@ -122,7 +139,7 @@ app.listen(3000, () => {
 app.get('/bans', async (req, res) => {
     
     if (req.query.code) {
-        const pas = await initPassport(req.query.code, '/')
+        const pas = await initPassport(req.query.code, '/bans')
     }
     if (passport == null) {
         return res.redirect('https://discord.com/api/oauth2/authorize?client_id=962427659437105182&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fbans&response_type=code&scope=identify%20guilds.members.read%20guilds')
@@ -159,7 +176,7 @@ app.get('/bans', async (req, res) => {
 
 app.get('/info', async (req, res) => { 
     if (req.query.code) {
-        const pas = await initPassport(req.query.code, '/')
+        const pas = await initPassport(req.query.code, '/info')
     }
     if (passport == null) {
         return res.redirect('https://discord.com/api/oauth2/authorize?client_id=962427659437105182&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Finfo&response_type=code&scope=identify%20guilds.members.read%20guilds')
@@ -193,6 +210,44 @@ app.get('/info', async (req, res) => {
     res.sendFile(path.join(__dirname, 'web/info.html'))
 }
 })
+
+app.get('/settings', async (req, res) => { 
+    if (req.query.code) {
+        const pas = await initPassport(req.query.code, '/settings')
+    }
+    if (passport == null) {
+        return res.redirect('https://discord.com/api/oauth2/authorize?client_id=962427659437105182&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fsettings&response_type=code&scope=identify%20guilds.members.read%20guilds')
+    }
+    // @ts-ignore
+    // @ts-ignore
+    if (req.session.hasPerms == null) {
+    const permissions = await checkPermissions(passport.token, passport.user.id)
+    if (permissions == false) {
+        // @ts-ignore
+        req.session.hasPerms = false
+        return res.sendFile(path.join(__dirname, 'web/405.html'))
+
+    } else if (permissions == true) {
+        // @ts-ignore  
+        req.session.hasPerms = true
+        res.sendFile(path.join(__dirname, 'web/settings.html'))
+        
+    }
+    res.cookie('.bpasecurity', passport.token, { maxAge: passport.expires_in })
+    if (!permissions) { 
+        return res.sendFile(path.join(__dirname, 'web/405.html'))
+
+    }
+    // @ts-ignore
+} else if (req.session.hasPerms == false) {
+    return res.sendFile(path.join(__dirname, 'web/405.html'))
+
+    // @ts-ignore
+} else if (req.session.hasPerms == true) {
+    res.sendFile(path.join(__dirname, 'web/settings.html'))
+}
+})
+
 
 
 app.get('/api/users/:username', async (req, res) => {
