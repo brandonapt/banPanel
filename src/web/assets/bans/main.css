@@ -1,0 +1,30 @@
+p {
+    margin: 20px;
+    float: left;
+    width: 95.5%;
+    display: grid;
+    grid-gap: 10px;
+    grid-auto-rows: minmax(5, auto);
+    grid-auto-flow: row dense;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 0.2fr));
+    grid-auto-rows: minmax(10, auto);
+}
+
+*{
+  margin:0;
+  padding: 0;
+}
+button {
+    padding: 15px;
+    margin: 20px;
+    display: grid;
+    grid-gap: 10px;
+    grid-auto-rows: minmax(5, auto);
+    grid-auto-flow: row dense;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 0.2fr));
+    grid-auto-rows: minmax(10, auto);
+}
+
+h1 {
+    text-align: center;
+}

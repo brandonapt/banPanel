@@ -1,0 +1,28 @@
+p {
+    margin: 20px;
+    float: left;
+    width: 95.5%;
+    display: grid;
+    grid-gap: 10px;
+    grid-auto-rows: minmax(5, auto);
+    grid-auto-flow: row dense;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 0.2fr));
+    grid-auto-rows: minmax(10, auto);
+    text-align: center;
+    text-indent: 1%;
+}
+
+img {
+    width: 100%;
+    height: auto;
+}
+
+
+.mdl-button--colored {
+    text-align: center;
+    left: 47.5%;
+}
+
+h1 {
+    text-align: center;
+}

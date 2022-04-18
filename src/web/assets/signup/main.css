@@ -1,0 +1,27 @@
+.roblox-username.mdl-card {
+    width: 512px;
+    /* center the card */
+    margin: 0 auto;
+    margin-top: 10%;
+    /* make the card have a fixed height */
+    height: 100%;
+    text-align: center;
+    /* center the card vertically */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+form {
+    text-align: center;
+}
+  .roblox-username > .mdl-card__title {
+    color: #000;
+    margin-bottom: 5px;
+    text-align: center;
+  }
+  .roblox-username > .mdl-card__menu {
+    color: #fff;
+    text-align: center;
+  }
