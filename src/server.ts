@@ -420,6 +420,12 @@ app.get('/api/update/check', async (req, res) => {
     }
 })
 
+app.get('/api/changelog/get', async (req, res) => {
+    const raw = await fetch('https://raw.githubusercontent.com/brandoge91/banPanel/master/src/files/changelog.txt')
+    const changelog = await raw.text()
+    return res.json({ success: true, changelog: changelog, version: getVersion() })
+})
+
 app.use((req, res, next) => {
     res.status(404).sendFile(path.join(__dirname, 'web/404.html'))
   })
