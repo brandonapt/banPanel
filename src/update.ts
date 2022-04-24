@@ -66,12 +66,15 @@ async function getFiles(folder) {
 export async function update() {
     getFiles("/").then(() => {
         logData("Successfully updated bot files");
-        // @ts-ignore
-        fs.writeFile('updateLog.txt', fileInfo).catch();
+         fs.writeFile('updateLog.txt', fileInfo, (err) => {
+             if (err) throw err;
+            
+         })
     }).catch(e => {
         logData(`Oops! There was an error while attempting to update the bot files: ${e}`);
-        // @ts-ignore
-        fs.writeFile('updateLog.txt', fileInfo).catch();
+        fs.writeFile('updateLog.txt', fileInfo, (err) => {
+            if (err) throw err;
+        })
     }); 
 }
 
