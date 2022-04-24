@@ -18,12 +18,23 @@ updateButton.addEventListener('click', async () => {
             if (! dialog.showModal) {
               dialogPolyfill.registerDialog(dialog);
             }
+            var dialog2 = document.querySelector('#update-dialog');
+            if (! dialog2.showModal) {
+              dialogPolyfill.registerDialog(dialog2);
+            }
             dialog.showModal();
             updateButton.disabled = true;
             downloadButton.disabled = true;
             dialog.querySelector('button:not([disabled])')
+            document.getElementById('continue').addEventListener('click', async () => {
+                dialog.close();
+                dialog2.showModal();
+                await fetch(window.location.origin + '/api/update/start')
+            })
             .addEventListener('click', function() {
               dialog.close();
+              updateButton.disabled = false;
+              downloadButton.disabled = false;
             });
 
         }

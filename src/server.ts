@@ -12,8 +12,9 @@ const { URLSearchParams } = require('url');
 import { place, url, clientId, clientSecret, roleId, guildId, sessionSecret, adminRoleId } from "./config";
 import noblox, { getIdFromUsername, getPlayerInfo, getPlayerThumbnail } from "noblox.js";
 import { createInitialSiteUser, unbanUserViaId } from "./database";
-import { generateLuaScript, generateRandomString, getVersion } from "./utils";
+import { generateLuaScript, generateRandomString, getLatestVersion, getVersion } from "./utils";
 import fs from "fs";
+import { update } from "./update";
 // import the database
 const API_ENDPOINT = 'https://discord.com/api/v8'
 const CLIENT_ID = clientId;
@@ -423,7 +424,16 @@ app.get('/api/update/check', async (req, res) => {
 app.get('/api/changelog/get', async (req, res) => {
     const raw = await fetch('https://raw.githubusercontent.com/brandoge91/banPanel/master/src/files/changelog.txt')
     const changelog = await raw.text()
-    return res.json({ success: true, changelog: changelog, version: getVersion() })
+    return res.json({ success: true, changelog: changelog, version: getLatestVersion() })
+})
+
+app.get('/api/update/start', async (req, res) => {
+    try {
+        await update()
+        return res.json({ success: true })
+    } catch (e) {
+        return res.json({ success: false, error: e })
+    }
 })
 
 app.use((req, res, next) => {

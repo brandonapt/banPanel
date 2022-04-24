@@ -102,3 +102,9 @@ end`
     const version = fs.readFileSync(path.join(__dirname, 'files', 'version.txt'), 'utf8');
     return version;
   }
+
+  export async function getLatestVersion() {
+    const version = await fetch('https://raw.githubusercontent.com/brandoge91/banPanel/master/src/files/version.txt')
+    .then(res => res.text());
+    return version;
+  }
