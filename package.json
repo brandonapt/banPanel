@@ -20,10 +20,11 @@
     "express": "^4.17.3",
     "express-full-url": "^0.0.2",
     "express-session": "^1.17.2",
+    "express-zip": "^3.0.0",
     "full-url": "^1.0.0",
     "loggis": "^2.0.0",
     "mongoose": "^6.2.10",
-    "noblox.js": "github:SecureServiceRBX/noblox.js",
+    "noblox.js": "^4.13.1",
     "npm": "^8.6.0",
     "path": "^0.12.7",
     "typescript": "^4.6.3"

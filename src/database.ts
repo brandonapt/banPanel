@@ -11,7 +11,7 @@ mongoose.connect('mongodb://localhost:27017/banPanel').catch(console.error);
     bannedBy: String,
     expiresOn: Date,
 },{ collection: "users" }));
-const SiteUser = model("SiteUser", new Schema({
+const SiteUser = model("SiteUser", new Schema({ 
     discordId: Number,
     discordTag: String,
     owner: Boolean,

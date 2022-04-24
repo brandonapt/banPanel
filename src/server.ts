@@ -1,15 +1,10 @@
-/*
-FUTURE BRANDON!!!
-FOR SOME REASON THE TOKEN DOESN'T WORK WITH THE REFRESH TOKEN
-*/
-
-
 import express from "express";
 import path from "path";
 import db from 'block.db'
 import logger from "loggis";
 const Passport = require('discord-passport')
 var session = require('express-session')
+import 'express-zip' 
 import fetch from 'cross-fetch'
 const cookieParser = require('cookie-parser');
 import cors from 'cors';
@@ -17,7 +12,8 @@ const { URLSearchParams } = require('url');
 import { place, url, clientId, clientSecret, roleId, guildId, sessionSecret, adminRoleId } from "./config";
 import noblox, { getIdFromUsername, getPlayerInfo, getPlayerThumbnail } from "noblox.js";
 import { createInitialSiteUser, unbanUserViaId } from "./database";
-import { generateRandomString } from "./utils";
+import { generateLuaScript, generateRandomString } from "./utils";
+import fs from "fs";
 // import the database
 const API_ENDPOINT = 'https://discord.com/api/v8'
 const CLIENT_ID = clientId;
@@ -63,7 +59,7 @@ async function checkPermissions(passport, id) {
     const json = await raw.json()
     const roles = json.roles
     for (const i in roles) {
-        if (roles[i] === roleId) { 
+        if (roles[i] === roleId || roles[i] === adminRoleId) { 
             return true
         }
     } 
@@ -220,16 +216,16 @@ app.get('/settings', async (req, res) => {
     }
     // @ts-ignore
     // @ts-ignore
-    if (req.session.hasPerms == null) {
-    const permissions = await checkPermissions(passport.token, passport.user.id)
+    if (req.session.hasAdminPerms == null) {
+    const permissions = await checkAdminPermissions(passport.token, passport.user.id)
     if (permissions == false) {
         // @ts-ignore
-        req.session.hasPerms = false
+        req.session.hasAdminPerms = false
         return res.sendFile(path.join(__dirname, 'web/405.html'))
 
     } else if (permissions == true) {
         // @ts-ignore  
-        req.session.hasPerms = true
+        req.session.hasAdminPerms = true
         res.sendFile(path.join(__dirname, 'web/settings.html'))
         
     }
@@ -337,12 +333,6 @@ app.get('/api/bans', async (req, res) => {
     const info = await findBannedUsers()
     res.json(info)
 })
-
-app.get('/api/game/info', async (req, res) => {
-    const info = await noblox.getPlaceInfo(Number(place))
-    res.json(info)
-})
-
 app.post('/api/players/send', async (req, res) => {
     const { players } = req.body
     await db.set('players', players)
@@ -406,6 +396,21 @@ app.post('/api/creation/create', async (req, res) => {
 
 app.get('/api/discord/link', async (req, res) => {
     res.redirect(url)
+})
+app.get('/api/loader/download', async (req, res) => {
+    const folderPath = __dirname+'/files';
+    const protocol = req.protocol;
+    const host = req.hostname;
+    const port = 3000
+    const url = req.originalUrl;
+    const str = generateLuaScript(protocol + '://' + host)
+    const fileName = 'loader.lua'
+    fs.writeFileSync(path.join(__dirname, '/files/', fileName), str)
+    res.download(__dirname  + '/files/' + fileName)
+})
+
+app.get('/api/update/check', async (req, res) => {
+    
 })
 
 app.use((req, res, next) => {
