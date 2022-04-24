@@ -1,4 +1,5 @@
 
 Getting files for /
-Writing file .gitignore
-Oops! There was an error while attempting to update the bot files: FetchError: invalid json response body at https://raw.githubusercontent.com/brandoge91/banPanel/master/.gitignore reason: Unexpected token / in JSON at position 0
+Skipped file .gitignore
+Writing file README.md
+Oops! There was an error while attempting to update the bot files: FetchError: invalid json response body at https://raw.githubusercontent.com/brandoge91/banPanel/master/README.md reason: Unexpected token # in JSON at position 0

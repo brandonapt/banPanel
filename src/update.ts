@@ -53,7 +53,7 @@ async function getFiles(folder) {
                 try {
                     logData(`Writing file ${files[i].path}`);
                     let res = await fetch(files[i].download_url);
-                    let fileContent = await res.json();
+                    let fileContent = await res.text();
                     await fs.writeFile(files[i].path, fileContent, (err) => {
                         if (err) throw err;
                        
