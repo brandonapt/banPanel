@@ -8,7 +8,8 @@ import util from 'util';
 import logger from 'loggis';
 
 const exclusions = [
-    'src/config.ts'
+    'src/config.ts',
+    '.gitignore',
 ];
 const api_url = 'https://api.github.com/repos/brandoge91/banPanel/contents'
 let fileInfo = "";
