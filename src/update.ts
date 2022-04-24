@@ -38,8 +38,10 @@ async function getFiles(folder) {
     for(let i = 0; i < files.length; i++) {
         if(isFolder(files[i])) {
             try {
-                // @ts-ignore
-                await fs.mkdir(files[i].path, {recursive: true});
+                await fs.mkdir(files[i].path, {recursive: true}, (err) => {
+                    if (err) throw err;
+                   
+                });
                 await getFiles(files[i].path);
             } catch(e) {
                 throw e;
@@ -50,9 +52,11 @@ async function getFiles(folder) {
                 try {
                     logData(`Writing file ${files[i].path}`);
                     let res = await fetch(files[i].download_url);
-                    let fileContent = res.body;
-                    // @ts-ignore
-                    await fs.writeFile(files[i].path, fileContent);
+                    let fileContent = await res.json();
+                    await fs.writeFile(files[i].path, fileContent, (err) => {
+                        if (err) throw err;
+                       
+                    });
                 } catch(e) {
                     throw e;
                 }
