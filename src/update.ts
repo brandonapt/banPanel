@@ -54,10 +54,16 @@ async function getFiles(folder) {
                     logData(`Writing file ${files[i].path}`);
                     let res = await fetch(files[i].download_url);
                     let fileContent = await res.text();
+                    let localFileContent = fs.readFileSync(files[i].path, 'utf8');
+                    if(fileContent !== localFileContent) {
+                        return logData(`File ${files[i].path} is latest`);
+
+                    } else {
                     await fs.writeFile(files[i].path, fileContent, (err) => {
                         if (err) throw err;
                        
                     });
+                }
                 } catch(e) {
                     throw e;
                 }
