@@ -107,5 +107,6 @@ end`
 
   export async function getLatestVersion() {
     const version = await fetch('https://raw.githubusercontent.com/brandoge91/banPanel/master/src/files/version.txt')
-    return await version.text();
+	const version2 =  await version.text();
+    return version2
   }
