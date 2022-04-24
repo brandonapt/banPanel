@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import fetch from 'cross-fetch';
+import logger from 'loggis';
 
 export function generateRandomString() {
     let randomString = "";
