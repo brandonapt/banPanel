@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@discordjs/rest": "^0.4.1",
+    "auto-git-update": "^2.1.2",
     "auto-updater": "^1.0.2",
     "block.db": "^1.1.1",
     "cookie-parser": "^1.4.6",
