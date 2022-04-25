@@ -100,8 +100,8 @@ while true do
 end`
   }
 
-  export function getVersion() {
-    const version = fs.readFileSync(path.join(__dirname, 'files', 'version.txt'), 'utf8');
+  export async function getVersion() {
+    const version = await fs.readFileSync(path.join(__dirname, 'files', 'version.txt'), 'utf8');
     return version;
   }
 

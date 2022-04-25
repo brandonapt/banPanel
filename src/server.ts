@@ -413,7 +413,7 @@ app.get('/api/loader/download', async (req, res) => {
 app.get('/api/update/check', async (req, res) => {
     const raw = await fetch('https://raw.githubusercontent.com/brandoge91/banPanel/master/src/files/version.txt')
     const currentVersion = await raw.text()
-    const localVersion = getVersion()
+    const localVersion = await getVersion()
     if (currentVersion > localVersion) {
         return res.json({ success: true, update: true })
     } else {
