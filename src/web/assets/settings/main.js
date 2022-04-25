@@ -29,7 +29,16 @@ updateButton.addEventListener('click', async () => {
             document.getElementById('continue').addEventListener('click', async () => {
                 dialog.close();
                 dialog2.showModal();
-                await fetch(window.location.origin + '/api/update/start')
+                fetch(window.location.origin + '/api/update/start').then(() => {
+                    dialog2.close();
+                    snackbarContainer.MaterialSnackbar.showSnackbar({
+                        message: 'Update finished!',
+                        timeout: 2000
+                    });
+                    updateButton.disabled = false;
+                    downloadButton.disabled = false;
+                }
+                )
             })
             .addEventListener('click', function() {
               dialog.close();

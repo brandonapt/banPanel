@@ -428,12 +428,14 @@ app.get('/api/changelog/get', async (req, res) => {
 
 app.get('/api/update/start', async (req, res) => {
     try {
-        await update()
+        update().then(() => {
         return res.json({ success: true })
+        })
     } catch (e) {
         return res.json({ success: false, error: e })
     }
 })
+
 
 app.use((req, res, next) => {
     res.status(404).sendFile(path.join(__dirname, 'web/404.html'))
