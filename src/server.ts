@@ -4,6 +4,7 @@ import express from "express";
 import path from "path";
 import db from 'block.db'
 import logger from "loggis";
+import fetch from "cross-fetch";
 const Passport = require('discord-passport')
 var session = require('express-session')
 const cookieParser = require('cookie-parser');
