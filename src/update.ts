@@ -13,6 +13,6 @@ export async function update() {
         logger.error(error);
         return false;
     }
-    await writeFileSync(path.join(__dirname + 'updateLog.txt'), out);
+    await writeFileSync(path.join(__dirname + 'updateLog.txt'), out.toString());
     return true;
 }
