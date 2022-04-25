@@ -19,6 +19,64 @@ const SiteUser = model("SiteUser", new Schema({
     robloxId: Number,
     robloxName: String,
 },{ collection: "siteusers" }));
+const SiteSettings = model("SiteSettings", new Schema({
+    groupId: Number,
+    clientId: String,
+    clientSecret: String,
+    guildId: String,
+    userRoleId: String,
+    adminRoleId: String,
+},{ collection: "sitesettings" }));
+
+
+async function getSiteSettings() {
+    const settings = await SiteSettings.findOne({});
+    if (!settings) {
+        const newSettings = new SiteSettings({
+            groupId: 0,
+            clientId: "",
+            clientSecret: "",
+            guildId: "",
+            userRoleId: "",
+            adminRoleId: "",
+        });
+        await newSettings.save();
+        return newSettings;
+    }
+    return settings;
+}
+async function setGroupId(groupId: Number) {
+    const settings = await getSiteSettings();
+    settings.groupId = groupId;
+    await settings.save();
+}
+async function setClientId(clientId: String) {
+    const settings = await getSiteSettings();
+    settings.clientId = clientId;
+    await settings.save();
+}
+async function setClientSecret(clientSecret: String) {
+    const settings = await getSiteSettings();
+    settings.clientSecret = clientSecret;
+    await settings.save();
+}
+async function setGuildId(guildId: String) {
+    const settings = await getSiteSettings();
+    settings.guildId = guildId;
+    await settings.save();
+}
+async function setUserRoleId(roleId: String) {
+    const settings = await getSiteSettings();
+    settings.userRoleId = roleId;
+    await settings.save();
+}
+async function setAdminRoleId(roleId: String) {
+    const settings = await getSiteSettings();
+    settings.adminRoleId = roleId;
+    await settings.save();
+}
+
+
 
  async function findUser(userId: Number) {
     const name = await getUsernameFromId(Number(userId));
@@ -95,4 +153,4 @@ async function addDiscordToUser(userId: Number, discordId: Number, discordTag: S
 
 
 //export all the functions 
-export { findUser, findUserViaName, findBannedUsers, banUserViaId, unbanUserViaId, createInitialSiteUser, createSiteUser };
+export { findUser, findUserViaName, findBannedUsers, banUserViaId, unbanUserViaId, createInitialSiteUser, createSiteUser, getSiteSettings };

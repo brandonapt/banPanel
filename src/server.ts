@@ -1,16 +1,13 @@
 // ok if htis doesnt wok ill be mad
-
+// @ts-ignore
 import express from "express";
 import path from "path";
 import db from 'block.db'
 import logger from "loggis";
 const Passport = require('discord-passport')
 var session = require('express-session')
-import 'express-zip' 
-import fetch from 'cross-fetch'
 const cookieParser = require('cookie-parser');
 import cors from 'cors';
-const { URLSearchParams } = require('url');
 import { place, url, clientId, clientSecret, roleId, guildId, sessionSecret, adminRoleId } from "./config";
 import noblox, { getIdFromUsername, getPlayerInfo, getPlayerThumbnail } from "noblox.js";
 import { createInitialSiteUser, unbanUserViaId } from "./database";
