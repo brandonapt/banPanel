@@ -1,6 +1,7 @@
 import mongoose, { model, connect } from "mongoose";
 const { Schema } = mongoose;
 import { getIdFromUsername, getUsernameFromId } from "noblox.js";
+// ok i hope thjis works
 
 mongoose.connect('mongodb://localhost:27017/banPanel').catch(console.error);
  const User = model("User", new Schema({
