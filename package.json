@@ -19,7 +19,6 @@
     "discord-passport": "github:brandoge91/discord-passport",
     "express": "^4.17.3",
     "express-session": "^1.17.2",
-    "git-pull-or-clone": "^2.0.2",
     "loggis": "^2.0.0",
     "mongoose": "^6.2.10",
     "noblox.js": "^4.13.1",

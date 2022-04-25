@@ -1,6 +1,6 @@
-const gitPullOrClone = require('git-pull-or-clone')
+import { exec } from "child_process";
+import { readFileSync } from "fs";
+import { resolve } from "path";
+import { promisify } from "util";
 
-gitPullOrClone('git@github.com:brandoge91/banPanel.git', '/', (err) => {
-  if (err) throw err
-  console.log('SUCCESS!')
-})
+exec('git pull');
