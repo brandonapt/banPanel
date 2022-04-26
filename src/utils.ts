@@ -103,7 +103,6 @@ end`
   export async function getVersion() {
 	const data = fs.readFileSync(path.join(__dirname, './files/version.txt'),
 	{encoding:'utf8'});
-	console.log(data);
 	return data;
   }
 
