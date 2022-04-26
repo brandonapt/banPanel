@@ -25,7 +25,11 @@ updateButton.addEventListener('click', async () => {
             dialog.showModal();
             updateButton.disabled = true;
             downloadButton.disabled = true;
-            dialog.querySelector('button:not([disabled])')
+            dialog.querySelector('button:not([disabled])').addEventListener('click', function() {
+                dialog.close();
+                updateButton.disabled = false;
+                downloadButton.disabled = false;
+              });
             document.getElementById('continue').addEventListener('click', async () => {
                 dialog.close();
                 dialog2.showModal();
@@ -40,11 +44,7 @@ updateButton.addEventListener('click', async () => {
                 }
                 )
             })
-            .addEventListener('click', function() {
-              dialog.close();
-              updateButton.disabled = false;
-              downloadButton.disabled = false;
-            });
+
 
         }
     } else {

@@ -424,7 +424,7 @@ app.get('/api/update/check', async (req, res) => {
 app.get('/api/changelog/get', async (req, res) => {
     const raw = await fetch('https://raw.githubusercontent.com/brandoge91/banPanel/master/src/files/changelog.txt')
     const changelog = await raw.text()
-    return res.json({ success: true, changelog: changelog, version: getLatestVersion() })
+    return res.json({ success: true, changelog: changelog, version: await getLatestVersion() })
 })
 
 app.get('/api/update/start', async (req, res) => {
