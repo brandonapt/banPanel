@@ -1,3 +1,5 @@
+join the discord server to stay in-the-know on releasew!!! https://discord.gg/etnGzxQpW6
+
 # banPanel
 a website-roblox ban panel to ban users, view current ingame users, and more!
 
