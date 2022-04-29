@@ -46,6 +46,11 @@ updateButton.addEventListener('click', async () => {
             })
 
 
+        } else {
+            snackbarContainer.MaterialSnackbar.showSnackbar({
+                message: 'No updates available!',
+                timeout: 2000
+            });
         }
     } else {
         var snackbarData = {

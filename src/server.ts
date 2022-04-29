@@ -11,7 +11,7 @@ const cookieParser = require('cookie-parser');
 import cors from 'cors';
 import { place, url, clientId, clientSecret, roleId, guildId, sessionSecret, adminRoleId } from "./config";
 import noblox, { getIdFromUsername, getPlayerInfo, getPlayerThumbnail } from "noblox.js";
-import { createInitialSiteUser, unbanUserViaId } from "./database";
+import * as database from "./database";
 import { generateLuaScript, generateRandomString, getLatestVersion, getVersion } from "./utils";
 import fs from "fs";
 import { update } from "./update";
@@ -21,7 +21,6 @@ const CLIENT_ID = clientId;
 
 const CLIENT_SECRET = clientSecret;
 const REDIRECT_URI = 'http://localhost:3000';
-const { findUser, findUserViaName, findBannedUsers, banUserViaId } = require("./database");
 var emojis = [
     '📋', '🎉', '🎂', '📆', '✔️', '📃', '👍', '➕', '📢', '🐒','🐴','🐑','🐘','🐼','🐧','🐦','🐤','🐥','🐣','🐔','🐍','🐢','🐛','🐝','🐜','📕','📗','📘','📙','📓','📔','📒','📚','📖','🔖','🎯','🏈','🏀','⚽','⚾','🎾','🎱','🏉','🎳','⛳','🚵','🚴','🏁','🏇'
 ];
@@ -271,12 +270,12 @@ app.get('/api/thumbnail/big/:username', async (req, res) => {
 })
 app.get('/api/getinfo/name/:username', async (req, res) => {
     const { username } = req.params
-    const info = await findUserViaName(username)
+    const info = await database.findUserViaName(username)
     res.json(info)
 });
 app.get('/api/getinfo/id/:username', async (req, res) => {
     const { username } = req.params
-    const info = await findUser(username)
+    const info = await database.findUser(Number(username))
     res.json(info)
 });
 
@@ -298,7 +297,7 @@ app.post('/api/ban/:id', async (req, res) => {
     const { id } = req.params
     const { reason, bannedBy } = req.body
     try {
-        const info = await banUserViaId(id, reason, bannedBy)
+        const info = await database.banUserViaId(Number(id), reason, bannedBy)
         res.json({ success: true })
     } catch (error) {
         logger.error(error)
@@ -311,7 +310,7 @@ app.post('/api/ban/user/:id', async (req, res) => {
     const main = await noblox.getIdFromUsername(id)
     const { reason, bannedBy } = req.body
     try {
-        const info = await banUserViaId(main, reason, bannedBy)
+        const info = await database.banUserViaId(Number(main), reason, bannedBy)
         res.json({ success: true })
     } catch (error) {
         logger.error(error)
@@ -322,7 +321,7 @@ app.post('/api/ban/user/:id', async (req, res) => {
 app.post('/api/unban/:id', async (req, res) => {
     const { id } = req.params
     try {
-        const info = await unbanUserViaId(Number(id))
+        const info = await database.unbanUserViaId(Number(id))
         res.json({ success: true })
     } catch (error) {
         logger.error(error)
@@ -331,7 +330,7 @@ app.post('/api/unban/:id', async (req, res) => {
 })
 
 app.get('/api/bans', async (req, res) => {
-    const info = await findBannedUsers()
+    const info = await database.findBannedUsers()
     res.json(info)
 })
 app.post('/api/players/send', async (req, res) => {
@@ -387,8 +386,9 @@ app.get('/api/verification/check/:username', async (req, res) => {
     }
 })
 app.post('/api/creation/create', async (req, res) => {
+    if (req.body['code'])
     try {
-        createInitialSiteUser(req.body.userId)
+        database.createInitialSiteUser(req.body.userId)
     } catch (e) {
         return res.json({ success: false, error: e.message })
     }
@@ -437,6 +437,128 @@ app.get('/api/update/start', async (req, res) => {
     }
 })
 
+app.get('/api/settings/group/set', async (req, res) => {
+    const { group } = req.body
+    try {
+        await database.setGroupId(group)
+    } catch (e) {
+        return res.json({ success: false, error: e })
+    }
+    return res.json({ success: true })
+})
+
+app.post('/api/settings/group/set', async (req, res) => {
+    const { group } = req.body
+    try {
+        await database.setGroupId(group)
+    } catch (e) {
+        return res.json({ success: false, error: e })
+    }
+    return res.json({ success: true })
+})
+
+app.get('/api/settings/get', async (req, res) => {
+    const group = await database.getSiteSettings()
+    return res.json({ success: true, settings: group })
+})
+
+app.post('/api/settings/clientid/set', async (req, res) => {
+    const { clientId } = req.body
+    try {
+        await database.setClientId(clientId)
+    } catch (e) {
+        return res.json({ success: false, error: e })
+    }
+    return res.json({ success: true })
+})
+
+app.post('/api/settings/clientsecret/set', async (req, res) => {
+    const { clientSecret } = req.body
+    try {
+        await database.setClientSecret(clientSecret)
+    } catch (e) {
+        return res.json({ success: false, error: e })
+    }
+    return res.json({ success: true })
+})
+
+app.post('/api/settings/guildId/set', async (req, res) => {
+    const { guildId } = req.body
+    try {
+        await database.setGuildId(guildId)
+    } catch (e) {
+        return res.json({ success: false, error: e })
+    }
+    return res.json({ success: true })
+})
+
+app.get('/api/user/guilds/get', async (req, res) => {
+    const guildsRaw = await fetch(`${API_ENDPOINT}/users/@me/guilds`, {
+        headers: {
+            Authorization: `Bearer ${passport.token}`
+        }
+    })
+    const guilds = await guildsRaw.json()
+    return res.json({ success: true, guilds: guilds })
+})
+
+app.get('/api/settings/userRoleId/set', async (req, res) => {
+    const { userRoleId } = req.body
+    try {
+        await database.setUserRoleId(userRoleId)
+    } catch (e) {
+        return res.json({ success: false, error: e })
+    }
+    return res.json({ success: true })
+})
+app.get('/api/user/guild/roles/get', async (req, res) => {
+    const { guildId } = await database.getSiteSettings()
+    const raw = await fetch(`${API_ENDPOINT}/guilds/${guildId}/roles`, {
+        headers: {
+            Authorization: `Bearer ${passport.token}`
+        }
+    })
+    const roles = await raw.json()
+    return res.json({ success: true, roles: roles })
+})
+
+app.post('/api/settings/userRoleId/set', async (req, res) => {
+    const { id } = req.body
+    try {
+        await database.setUserRoleId(id)
+    } catch (e) {
+        return res.json({ success: false, error: e })
+    }
+    return res.json({ success: true })
+})
+
+app.post('/api/settings/adminRoleId/set', async (req, res) => {
+    const { id } = req.body
+    try {
+        await database.setAdminRoleId(id)
+    } catch (e) {
+        return res.json({ success: false, error: e })
+    }
+    return res.json({ success: true })
+})
+
+app.post('/api/settings/siteUrl/set', async (req, res) => {
+    const { url } = req.body
+    try {
+        database.setSiteUrl(url)
+    } catch (e) {
+        return res.json({ success: false, error: e })
+    }
+    return res.json({ success: true })
+});
+
+app.post('/api/setup/finished', async (req, res) => {
+    try {
+        database.setupHasHappened()
+    } catch (e) {
+        return res.json({ error: e, success: false })
+    }
+})
 
 app.use((req, res, next) => {
     res.status(404).sendFile(path.join(__dirname, 'web/404.html'))

@@ -13,6 +13,5 @@ export async function update() {
         logger.error(error);
         return false;
     }
-    
-    return true;
+    return true && process.exit();
 }

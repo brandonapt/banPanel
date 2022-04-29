@@ -27,6 +27,8 @@ const SiteSettings = model("SiteSettings", new Schema({
     guildId: String,
     userRoleId: String,
     adminRoleId: String,
+    siteUrl: String,
+    setupHasHappened: Boolean,
 },{ collection: "sitesettings" }));
 
 
@@ -40,6 +42,8 @@ async function getSiteSettings() {
             guildId: "",
             userRoleId: "",
             adminRoleId: "",
+            siteUrl: "",
+            setupHasHappened: false,
         });
         await newSettings.save();
         return newSettings;
@@ -77,6 +81,17 @@ async function setAdminRoleId(roleId: String) {
     await settings.save();
 }
 
+async function setSiteUrl(url: String) {
+    const settings = await getSiteSettings();
+    settings.siteUrl = url;
+    await settings.save();
+}
+
+async function setupHasHappened() {
+    const settings = await getSiteSettings();
+    settings.setupHasHappened = true;
+    await settings.save();
+}
 
 
  async function findUser(userId: Number) {
@@ -154,4 +169,4 @@ async function addDiscordToUser(userId: Number, discordId: Number, discordTag: S
 
 
 //export all the functions 
-export { findUser, findUserViaName, findBannedUsers, banUserViaId, unbanUserViaId, createInitialSiteUser, createSiteUser, getSiteSettings };
+export { findUser, findUserViaName, findBannedUsers, banUserViaId, unbanUserViaId, createInitialSiteUser, createSiteUser, getSiteSettings, setGroupId, setClientId, setClientSecret, setGuildId, setUserRoleId, setAdminRoleId, addDiscordToUser, setSiteUrl, setupHasHappened };
