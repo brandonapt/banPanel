@@ -61,3 +61,28 @@ updateButton.addEventListener('click', async () => {
           snackbarContainer.MaterialSnackbar.showSnackbar(snackbarData);
     }
 })
+
+document.getElementById('switch-1').onchange = async function() {
+    console.log(document.getElementById('switch-1'));
+    let raw = await fetch(window.location.origin + '/api/settings/branch/set', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            branch: document.getElementById('switch-1').value
+        })
+    })
+    const data = await raw.json();
+    if (data.success === true) {
+        snackbarContainer.MaterialSnackbar.showSnackbar({
+            message: 'Develper branch set to ' + document.getElementById('switch-1').value,
+            timeout: 2000
+        });
+    } else {
+        snackbarContainer.MaterialSnackbar.showSnackbar({
+            message: 'Error setting branch',
+            timeout: 2000
+        });
+    }
+}

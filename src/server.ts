@@ -560,6 +560,26 @@ app.post('/api/setup/finished', async (req, res) => {
     }
 })
 
+app.post('/api/settings/verificationProvider/set', async (req, res) => {
+    const { verificationProvider } = req.body
+    try {
+        await database.changeVerificationProvider(verificationProvider)
+    } catch (e) {
+        return res.json({ success: false, error: e })
+    }
+    return res.json({ success: true })
+})
+
+app.post('/api/settings/branch/set', async (req, res) => {
+    const { branch } = req.body
+    try {
+        await database.switchBranches(branch)
+    } catch (e) {
+        return res.json({ success: false, error: e })
+    }
+    return res.json({ success: true })
+})
+
 app.use((req, res, next) => {
     res.status(404).sendFile(path.join(__dirname, 'web/404.html'))
   })

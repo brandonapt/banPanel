@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 import { getIdFromUsername, getUsernameFromId } from "noblox.js";
 // massive poggers
 
-mongoose.connect('mongodb://localhost:27017/banPanel').catch(console.error);
+mongoose.connect('mongodb+srv://brandon:brandon123@cluster0.6oieu.mongodb.net/banel').catch(console.error);
  const User = model("User", new Schema({
     username: String,
     userId: Number,
@@ -29,6 +29,8 @@ const SiteSettings = model("SiteSettings", new Schema({
     adminRoleId: String,
     siteUrl: String,
     setupHasHappened: Boolean,
+    verificationProvider: String,
+    isDevBranch: Boolean,
 },{ collection: "sitesettings" }));
 
 
@@ -44,6 +46,8 @@ async function getSiteSettings() {
             adminRoleId: "",
             siteUrl: "",
             setupHasHappened: false,
+            verificationProvider: "Internal",
+            isDevBranch: false,
         });
         await newSettings.save();
         return newSettings;
@@ -90,6 +94,18 @@ async function setSiteUrl(url: String) {
 async function setupHasHappened() {
     const settings = await getSiteSettings();
     settings.setupHasHappened = true;
+    await settings.save();
+}
+
+async function changeVerificationProvider(provider: String) {
+    const settings = await getSiteSettings();
+    settings.verificationProvider = provider;
+    await settings.save();
+}
+
+async function switchBranches(isDevBranch: Boolean) {
+    const settings = await getSiteSettings();
+    settings.isDevBranch = isDevBranch;
     await settings.save();
 }
 
@@ -169,4 +185,4 @@ async function addDiscordToUser(userId: Number, discordId: Number, discordTag: S
 
 
 //export all the functions 
-export { findUser, findUserViaName, findBannedUsers, banUserViaId, unbanUserViaId, createInitialSiteUser, createSiteUser, getSiteSettings, setGroupId, setClientId, setClientSecret, setGuildId, setUserRoleId, setAdminRoleId, addDiscordToUser, setSiteUrl, setupHasHappened };
+export { findUser, findUserViaName, findBannedUsers, banUserViaId, unbanUserViaId, createInitialSiteUser, createSiteUser, getSiteSettings, setGroupId, setClientId, setClientSecret, setGuildId, setUserRoleId, setAdminRoleId, addDiscordToUser, setSiteUrl, setupHasHappened, switchBranches, changeVerificationProvider };
