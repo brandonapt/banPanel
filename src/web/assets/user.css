@@ -1,0 +1,17 @@
+#avatar {
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+    margin-top: 15px;
+}
+h4 {
+    color: white;
+    margin: 0;
+    font-size: 40px;
+}
+
+#colorbox {
+    background-color: #d82c2c;
+    padding: 100px;
+    margin-bottom: -70px;
+}

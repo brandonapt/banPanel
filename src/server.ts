@@ -83,48 +83,97 @@ async function checkAdminPermissions(passport, id) {
     return false
 }
 
+async function getUserInfo() {
+    const data = passport.user
+    return data
+}
+
 const app = express()
 app.use(express.json())
 app.use(cookieParser());
 app.use(cors())
 app.use(session({ secret: sessionSecret, cookie: { maxAge: 60000 }}))
 app.use(express.static(path.join(__dirname, 'web/assets')))
+// make the @material package available to the client
+app.use('/material',express.static(path.join(__dirname, '/../node_modules/@material')))
 
-app.get('/', async (req, res) => {
+async function authenticate(req,res,ending) {
+    if (req.query.code && req.session.hasPerms == undefined) {
+        const pas = await initPassport(req.query.code, '/' + ending)
+    } 
+    if (passport == null) {
+        return res.redirect(`https://discord.com/api/oauth2/authorize?client_id=962427659437105182&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2F${ending}&response_type=code&scope=identify%20guilds.members.read%20guilds`)
+    }
+    if (req.session.hasPerms == null) {
+        const permissions = await checkPermissions(passport.token, passport.user.id)
+        if (permissions == false) {
+            // @ts-ignore
+            req.session.hasPerms = false
+             res.sendFile(path.join(__dirname, 'web/405.html'))
+             return
+        } else if (permissions == true) {
+            // @ts-ignore  
+            req.session.hasPerms = true
+            return true
+            
+        }
+        res.cookie('.bpasecurity', passport.token, { maxAge: passport.expires_in })
+        if (!permissions) { 
+             res.sendFile(path.join(__dirname, 'web/405.html'))
+             return
+        }
+        } else if (req.session.hasPerms == false) {
+            res.sendFile(path.join(__dirname, 'web/405.html'))
+            return
+            // @ts-ignore
+        } else if (req.session.hasPerms == true) {
+            return true
+        }
+        
 
-    if (req.query.code) {
-        const pas = await initPassport(req.query.code, '/')
+}
+
+async function authenticateAdmin(req,res,ending) {
+    if (req.query.code && req.session.hasAdminPerms == undefined) {
+        const pas = await initPassport(req.query.code, '/' + ending)
     }
     if (passport == null) {
-        return res.redirect('https://discord.com/api/oauth2/authorize?client_id=962427659437105182&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2F&response_type=code&scope=identify%20guilds%20guilds.members.read')
+        return res.redirect(`https://discord.com/api/oauth2/authorize?client_id=962427659437105182&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2F${ending}&response_type=code&scope=identify%20guilds.members.read%20guilds`)
     }
-    // @ts-ignore
-    // @ts-ignore
-    if (req.session.hasPerms == null) {
-    const permissions = await checkPermissions(passport.token, passport.user.id)
-    if (permissions == false) {
-        // @ts-ignore
-        req.session.hasPerms = false
-        return res.sendFile(path.join(__dirname, 'web/405.html'))
-    } else if (permissions == true) {
-        // @ts-ignore  
-        req.session.hasPerms = true
-        res.sendFile(path.join(__dirname, 'web/index.html'))
+    if (req.session.hasAdminPerms == null) {
+        const permissions = await checkAdminPermissions(passport.token, passport.user.id)
+        if (permissions == false) {
+            // @ts-ignore
+            req.session.hasAdminPerms = false
+             res.sendFile(path.join(__dirname, 'web/405.html'))
+             return
+        } else if (permissions == true) { 
+            // @ts-ignore  
+            req.session.hasAdminPerms = true
+            return true
+            
+        }
+        res.cookie('.bpasecurity', passport.token, { maxAge: passport.expires_in })
+        if (!permissions) { 
+             res.sendFile(path.join(__dirname, 'web/405.html'))
+             return
+        }
+        } else if (req.session.hasAdminPerms == false) {
+            res.sendFile(path.join(__dirname, 'web/405.html'))
+            return
+            // @ts-ignore
+        } else if (req.session.hasAdminPerms == true) {
+            return true
+        }
         
-    }
-    res.cookie('.bpasecurity', passport.token, { maxAge: passport.expires_in })
-    if (!permissions) { 
-        return res.sendFile(path.join(__dirname, 'web/405.html'))
 
-    }
-    // @ts-ignore
-} else if (req.session.hasPerms == false) {
-    return res.sendFile(path.join(__dirname, 'web/405.html'))
-
-    // @ts-ignore
-} else if (req.session.hasPerms == true) {
-    res.sendFile(path.join(__dirname, 'web/index.html'))
 }
+
+app.get('/search', async (req, res) => {
+    const l = await authenticate(req,res,'search')
+    if (l == true) {
+        res.sendFile(path.join(__dirname,'web/search.html'))
+    }
 
 })
 
@@ -133,115 +182,24 @@ app.listen(3000, () => {
 })
 
 app.get('/bans', async (req, res) => {
-    
-    if (req.query.code) {
-        const pas = await initPassport(req.query.code, '/bans')
+    const l = await authenticate(req,res,'bans')
+    if (l == true) {
+        res.sendFile(path.join(__dirname,'web/bans.html'))
     }
-    if (passport == null) {
-        return res.redirect('https://discord.com/api/oauth2/authorize?client_id=962427659437105182&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fbans&response_type=code&scope=identify%20guilds.members.read%20guilds')
-    }
-    // @ts-ignore
-    // @ts-ignore
-    if (req.session.hasPerms == null) {
-    const permissions = await checkPermissions(passport.token, passport.user.id)
-    if (permissions == false) {
-        // @ts-ignore
-        req.session.hasPerms = false
-        return res.sendFile(path.join(__dirname, 'web/405.html'))
-
-    } else if (permissions == true) {
-        // @ts-ignore  
-        req.session.hasPerms = true
-        res.sendFile(path.join(__dirname, 'web/bans.html'))
-        
-    }
-    res.cookie('.bpasecurity', passport.token, { maxAge: passport.expires_in })
-    if (!permissions) { 
-        return res.sendFile(path.join(__dirname, 'web/405.html'))
-
-    }
-    // @ts-ignore
-} else if (req.session.hasPerms == false) {
-    return res.sendFile(path.join(__dirname, 'web/405.html'))
-
-    // @ts-ignore
-} else if (req.session.hasPerms == true) {
-    res.sendFile(path.join(__dirname, 'web/bans.html'))
-}
 })
 
 app.get('/info', async (req, res) => { 
-    if (req.query.code) {
-        const pas = await initPassport(req.query.code, '/info')
+    const l = await authenticate(req,res,'info')
+    if (l == true) {
+        res.sendFile(path.join(__dirname,'web/info.html'))
     }
-    if (passport == null) {
-        return res.redirect('https://discord.com/api/oauth2/authorize?client_id=962427659437105182&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Finfo&response_type=code&scope=identify%20guilds.members.read%20guilds')
-    }
-    // @ts-ignore
-    // @ts-ignore
-    if (req.session.hasPerms == null) {
-    const permissions = await checkPermissions(passport.token, passport.user.id)
-    if (permissions == false) {
-        // @ts-ignore
-        req.session.hasPerms = false
-        return res.sendFile(path.join(__dirname, 'web/405.html'))
-
-    } else if (permissions == true) {
-        // @ts-ignore  
-        req.session.hasPerms = true
-        res.sendFile(path.join(__dirname, 'web/info.html'))
-        
-    }
-    res.cookie('.bpasecurity', passport.token, { maxAge: passport.expires_in })
-    if (!permissions) { 
-        return res.sendFile(path.join(__dirname, 'web/405.html'))
-
-    }
-    // @ts-ignore
-} else if (req.session.hasPerms == false) {
-    return res.sendFile(path.join(__dirname, 'web/405.html'))
-
-    // @ts-ignore
-} else if (req.session.hasPerms == true) {
-    res.sendFile(path.join(__dirname, 'web/info.html'))
-}
 })
 
 app.get('/settings', async (req, res) => { 
-    if (req.query.code) {
-        const pas = await initPassport(req.query.code, '/settings')
+    const l = await authenticateAdmin(req,res,'settings')
+    if (l == true) {
+        res.sendFile(path.join(__dirname,'web/settings.html'))
     }
-    if (passport == null) {
-        return res.redirect('https://discord.com/api/oauth2/authorize?client_id=962427659437105182&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fsettings&response_type=code&scope=identify%20guilds.members.read%20guilds')
-    }
-    // @ts-ignore
-    // @ts-ignore
-    if (req.session.hasAdminPerms == null) {
-    const permissions = await checkAdminPermissions(passport.token, passport.user.id)
-    if (permissions == false) {
-        // @ts-ignore
-        req.session.hasAdminPerms = false
-        return res.sendFile(path.join(__dirname, 'web/405.html'))
-
-    } else if (permissions == true) {
-        // @ts-ignore  
-        req.session.hasAdminPerms = true
-        res.sendFile(path.join(__dirname, 'web/settings.html'))
-        
-    }
-    res.cookie('.bpasecurity', passport.token, { maxAge: passport.expires_in })
-    if (!permissions) { 
-        return res.sendFile(path.join(__dirname, 'web/405.html'))
-
-    }
-    // @ts-ignore
-} else if (req.session.hasPerms == false) {
-    return res.sendFile(path.join(__dirname, 'web/405.html'))
-
-    // @ts-ignore
-} else if (req.session.hasPerms == true) {
-    res.sendFile(path.join(__dirname, 'web/settings.html'))
-}
 })
 
 
@@ -291,6 +249,17 @@ app.get('/api/validate/:username', async (req, res) => {
     if (plr) return res.json({ success: true })
 });
 
+app.get('/api/userinfo', async (req,res) => {
+    const info = await getUserInfo()
+    res.json(info)
+})
+
+app.get('/template', async (req, res) => {
+    const l = await authenticate(req,res,'template')
+    if (l == true) {
+        res.sendFile(path.join(__dirname,'web/template.html'))
+    }
+})
 
 //create a post endpoint for banning
 app.post('/api/ban/:id', async (req, res) => {
@@ -298,6 +267,7 @@ app.post('/api/ban/:id', async (req, res) => {
     const { reason, bannedBy } = req.body
     try {
         const info = await database.banUserViaId(Number(id), reason, bannedBy)
+        console.log(info)
         res.json({ success: true })
     } catch (error) {
         logger.error(error)
@@ -310,7 +280,7 @@ app.post('/api/ban/user/:id', async (req, res) => {
     const main = await noblox.getIdFromUsername(id)
     const { reason, bannedBy } = req.body
     try {
-        const info = await database.banUserViaId(Number(main), reason, bannedBy)
+        const info = await database.banUserViaId(main, reason, bannedBy)
         res.json({ success: true })
     } catch (error) {
         logger.error(error)
@@ -328,6 +298,19 @@ app.post('/api/unban/:id', async (req, res) => {
         res.json({ success: false, error })
     }
 })
+
+app.post('/api/unban/user/:id', async (req, res) => {
+    const { id } = req.params
+    const main = await noblox.getIdFromUsername(id)
+    try {
+        const info = await database.unbanUserViaId(Number(main))
+        res.json({ success: true })
+    } catch (error) {
+        logger.error(error)
+        res.json({ success: false, error })
+    }
+})
+
 
 app.get('/api/bans', async (req, res) => {
     const info = await database.findBannedUsers()
@@ -429,7 +412,8 @@ app.get('/api/changelog/get', async (req, res) => {
 
 app.get('/api/update/start', async (req, res) => {
     try {
-        update().then(() => {
+        const isDevBranch = await database.getSiteSettings()
+        update(isDevBranch.isDevBranch).then(() => {
         return res.json({ success: true })
         })
     } catch (e) {

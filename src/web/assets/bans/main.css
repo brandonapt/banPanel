@@ -8,11 +8,13 @@ p {
     grid-auto-flow: row dense;
     grid-template-columns: repeat(auto-fill, minmax(160px, 0.2fr));
     grid-auto-rows: minmax(10, auto);
+    text-align: center;
 }
 
 *{
   margin:0;
   padding: 0;
+
 }
 button {
     padding: 15px;
@@ -23,6 +25,7 @@ button {
     grid-auto-flow: row dense;
     grid-template-columns: repeat(auto-fill, minmax(160px, 0.2fr));
     grid-auto-rows: minmax(10, auto);
+    text-align: center;
 }
 
 h1 {

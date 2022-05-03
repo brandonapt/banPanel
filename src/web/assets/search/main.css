@@ -1,0 +1,56 @@
+h1 {
+    text-align: center;
+    margin: 20px;
+}
+
+form {
+    text-align: center;
+}
+
+
+
+h2 {
+    text-align: center;
+}
+
+table {
+    text-align: center;
+}
+
+form {
+    text-align: center;
+}
+
+p {
+    text-align: center;
+}
+
+button {
+    text-align: center;
+}
+
+.main {
+    margin-top: 0;
+}
+
+
+
+#info {
+    text-align: center;
+}
+
+#loader {
+    left: 50%;
+}
+
+
+
+.mdl-card {
+    left: 37.5%;
+}
+
+
+
+form {
+    margin-top: 40px;
+}

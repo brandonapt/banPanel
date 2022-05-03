@@ -11,6 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "@discordjs/rest": "^0.4.1",
+    "@material/drawer": "^14.0.0",
+    "@material/list": "^14.0.0",
     "@types/cors": "^2.8.12",
     "block.db": "^1.1.1",
     "cookie-parser": "^1.4.6",
@@ -21,6 +23,7 @@
     "express": "^4.17.3",
     "express-session": "^1.17.2",
     "loggis": "^2.0.0",
+    "material-components-web": "^14.0.0",
     "mongoose": "^6.2.10",
     "noblox.js": "^4.13.1",
     "path": "^0.12.7",

@@ -1,5 +1,7 @@
 const downloadButton = document.getElementById('download');
 const updateButton = document.getElementById('update');
+const developerButton = document.getElementById('developer');
+const stableButton = document.getElementById('stable');
 var snackbarContainer = document.querySelector('#error-snackbar');
 downloadButton.addEventListener('click', () => {
     // have it download /api/loader/download
@@ -62,27 +64,36 @@ updateButton.addEventListener('click', async () => {
     }
 })
 
-document.getElementById('switch-1').onchange = async function() {
-    console.log(document.getElementById('switch-1'));
-    let raw = await fetch(window.location.origin + '/api/settings/branch/set', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            branch: document.getElementById('switch-1').value
-        })
-    })
+stableButton.onclick = async function () {
+    const raw = await fetch(window.location.origin + '/api/settings/branch/set', {  method: 'POST', body: false })
     const data = await raw.json();
-    if (data.success === true) {
+    if (data.success === true) {    
         snackbarContainer.MaterialSnackbar.showSnackbar({
-            message: 'Develper branch set to ' + document.getElementById('switch-1').value,
-            timeout: 2000
-        });
-    } else {
-        snackbarContainer.MaterialSnackbar.showSnackbar({
-            message: 'Error setting branch',
+            message: 'Successfully changed the branch to stable!',
             timeout: 2000
         });
     }
+}
+
+developerButton.onclick = async function () {
+    var dialog = document.querySelector('#confirm-branch');
+    if (! dialog.showModal) {
+        dialogPolyfill.registerDialog(dialog);
+    }
+    dialog.showModal();
+    dialog.querySelector('button:not([disabled])').addEventListener('click', function() {
+        dialog.close();
+    });
+    document.getElementById('next').addEventListener('click', async () => {
+    const raw = await fetch(window.location.origin + '/api/settings/branch/set', {  method: 'POST', body: true })
+    const data = await raw.json();
+    if (data.success === true) {    
+        snackbarContainer.MaterialSnackbar.showSnackbar({
+            message: 'Successfully changed the branch to developer!',
+            timeout: 2000
+        });
+    }
+    dialog.close();
+    })
+
 }

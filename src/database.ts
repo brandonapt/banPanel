@@ -134,8 +134,8 @@ async function findBannedUsers() {
     return userData;
 }
 
-async function banUserViaId(userId: Number, reason: String, bannedBy: String) {
-    const name = await getUsernameFromId(Number(userId));
+async function banUserViaId(userId: number, reason: String, bannedBy: String) {
+    const name = await getUsernameFromId(userId);
     let userData = await User.findOne({ userId: userId });
     if(!userData) {
         userData = await User.create({ userId: userId, username: name, banned: false });

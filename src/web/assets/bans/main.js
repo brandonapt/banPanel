@@ -14,7 +14,7 @@ window.onload = async function () {
         thumb = await thumb.json()
 
         let banItem = document.createElement('p')
-        banItem.innerHTML = `<img src='${thumb[0].imageUrl}'/><br><b>${ban.username}</b><br><br>${ban.bannedReason ?? 'No reason given.'}<br>`
+        banItem.innerHTML = `      <img style="margin-left: auto; margin-right: auto;" src='${thumb[0].imageUrl}'/><br><b>${ban.username}</b><br><br>${ban.bannedReason ?? 'No reason given.'}<br>`
         let banButton = document.createElement('button')
         banButton.className = 'mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent'
         banButton.innerHTML = 'Unban'

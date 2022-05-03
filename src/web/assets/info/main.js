@@ -1,12 +1,7 @@
 window.onload = async function () {
-    let info = await fetch('http://localhost:3000/api/game/info')
-    info = await info.json()
     const children = document.getElementById('pl').children
     // delete all children
     setTimeout(async function () {
-
-        let info = await fetch('http://localhost:3000/api/game/info')
-        info = await info.json()
         let players = await fetch('http://localhost:3000/api/players/get')
         players = await players.json()
         for (i in players) {
@@ -15,7 +10,7 @@ window.onload = async function () {
             let player = document.createElement('p')
             player.innerHTML = `<img src='${thumb[0].imageUrl}'/><br><b>${players[i]}</b>`
             let banButton = document.createElement('button')
-            banButton.className = 'mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent'
+            banButton.className = 'mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary'
             banButton.innerHTML = 'Ban'
             console.log(players[i])
             banButton.onclick = async function (e) {
@@ -47,8 +42,8 @@ window.onload = async function () {
         }
     }, 100)
 
-    document.getElementById('reload').onclick = async function (e) {
-        window.location.reload()
-    }
+    //document.getElementById('reload').onclick = async function (e) {
+      //  window.location.reload()
+    //}
 }
 

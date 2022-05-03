@@ -1,7 +1,11 @@
 // run preventdefault on the form submit event
 let curUser
+const textField = new mdc.textField.MDCTextField(document.querySelector('.mdc-text-field'));
+const textField2 = new mdc.textField.MDCTextField(document.getElementById('text2'));
+document.getElementById('loader').style.display = 'none'
 document.getElementById('info').style.display = 'none';
 document.querySelector('form').addEventListener('submit', async function(e) {
+  document.getElementById('loader').style.display = 'block'
     e.preventDefault();
     const username = e.srcElement[0].value
     let reasonText = document.getElementById('current_reason')
@@ -51,7 +55,7 @@ document.querySelector('form').addEventListener('submit', async function(e) {
         raw = 'Not Banned'
       }
       status.innerHTML = `Current Status: <b>${raw}</b>`
-
+      document.getElementById('loader').style.display = 'none'
       document.getElementById('info').style.display = 'block';
 
 });
@@ -63,9 +67,10 @@ document.getElementById('ban').onclick = async function (e) {
     text: 'Something went wrong!\n\nPlease enter a username you want to ban/unban.',
   })
   
-  const data = {reason: document.getElementById('reason').value, bannedBy: 'brandon!!!'}
+  const data = {reason: document.getElementById('reason').value, bannedBy: 'N/A'}
   // send a post request to ban the user
-  const response = await fetch('/api/ban/' + curUser.userId, {
+  console.log(curUser)
+  const response = await fetch('/api/ban/user/' + curUser.username, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -92,8 +97,8 @@ document.getElementById('ban').onclick = async function (e) {
   const status = await document.getElementById('status')
   let reasonText = document.getElementById('current_reason')
   reasonText.style.display = 'block'
-  document.getElementById('reason').value = raw.bannedReason ?? 'No reason given.'
-  reasonText.innerHTML = `Reason:<br>${raw.bannedReason ?? 'No reason given.'}`
+  reasonText.innerHTML = `Reason: ${document.getElementById('reason').value ?? 'No reason given.'}`
+  document.getElementById('reason').value = document.getElementById('reason').value ?? 'No reason given.'
   status.innerHTML = `Current Status: <b>Banned</b>`
 }
 
@@ -104,7 +109,7 @@ document.getElementById("unban").onclick = async function (e) {
     text: 'Something went wrong!\n\nPlease enter a username you want to ban/unban.',
   })
   // send a post request to ban the user
-  const response = await fetch('/api/unban/' + curUser.userId, {
+  const response = await fetch('/api/unban/user/' + curUser.username, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
