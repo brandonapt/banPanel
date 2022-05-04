@@ -30,6 +30,7 @@ const SiteSettings = model("SiteSettings", new Schema({
     siteUrl: String,
     setupHasHappened: Boolean,
     verificationProvider: String,
+    privateKey: String,
     isDevBranch: Boolean,
 },{ collection: "sitesettings" }));
 
@@ -39,12 +40,13 @@ async function getSiteSettings() {
     if (!settings) {
         const newSettings = new SiteSettings({
             groupId: 0,
-            clientId: "",
+            clientId: " ",
             clientSecret: "",
             guildId: "",
             userRoleId: "",
             adminRoleId: "",
             siteUrl: "",
+            privateKey: "",
             setupHasHappened: false,
             verificationProvider: "Internal",
             isDevBranch: false,
@@ -134,6 +136,8 @@ async function findBannedUsers() {
     return userData;
 }
 
+
+
 async function banUserViaId(userId: number, reason: String, bannedBy: String) {
     const name = await getUsernameFromId(userId);
     let userData = await User.findOne({ userId: userId });
@@ -166,6 +170,7 @@ async function createSiteUser(userId: Number, admin: Boolean) {
     userData.save();
     return userData;
 }
+
 
 async function createInitialSiteUser(userId: Number) {
     const name = await getUsernameFromId(Number(userId));

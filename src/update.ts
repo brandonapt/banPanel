@@ -19,7 +19,7 @@ export async function update(isDevBranch: boolean) {
     return true && process.exit();
 } else {
     try {
-        const { stdout, stderr } = await exec('git pull origin main');
+        const { stdout, stderr } = await exec('git pull origin master'); 
         out = stdout;
         logger.info(stdout)
         logger.error(stderr)

@@ -181,6 +181,13 @@ app.listen(3000, () => {
     logger.info('Server is listening on port 3000')
 })
 
+app.get('/', async (req, res) => {
+    const l = await authenticate(req,res,'')
+    if (l == true) {
+        res.sendFile(path.join(__dirname,'web/index.html'))
+    }
+})
+
 app.get('/bans', async (req, res) => {
     const l = await authenticate(req,res,'bans')
     if (l == true) {
@@ -234,7 +241,7 @@ app.get('/api/getinfo/name/:username', async (req, res) => {
 app.get('/api/getinfo/id/:username', async (req, res) => {
     const { username } = req.params
     const info = await database.findUser(Number(username))
-    res.json(info)
+    res.json(info);
 });
 
 app.get('/api/validate/:username', async (req, res) => {
@@ -369,7 +376,6 @@ app.get('/api/verification/check/:username', async (req, res) => {
     }
 })
 app.post('/api/creation/create', async (req, res) => {
-    if (req.body['code'])
     try {
         database.createInitialSiteUser(req.body.userId)
     } catch (e) {
@@ -394,6 +400,10 @@ app.get('/api/loader/download', async (req, res) => {
 })
 
 app.get('/api/update/check', async (req, res) => {
+    const data = await database.getSiteSettings()
+    if (data.isDevBranch == true) {
+        return res.json({ success: true, update: true })
+    }
     const raw = await fetch('https://raw.githubusercontent.com/brandoge91/banPanel/master/src/files/version.txt')
     const currentVersion = await raw.text()
     const localVersion = await getVersion()
@@ -453,7 +463,7 @@ app.post('/api/settings/clientid/set', async (req, res) => {
     } catch (e) {
         return res.json({ success: false, error: e })
     }
-    return res.json({ success: true })
+    return res.json({ success: true, clientId: clientId })
 })
 
 app.post('/api/settings/clientsecret/set', async (req, res) => {
@@ -477,16 +487,22 @@ app.post('/api/settings/guildId/set', async (req, res) => {
 })
 
 app.get('/api/user/guilds/get', async (req, res) => {
-    const guildsRaw = await fetch(`${API_ENDPOINT}/users/@me/guilds`, {
+    const raw = await fetch('https://discordapp.com/api/users/@me/guilds', {
         headers: {
-            Authorization: `Bearer ${passport.token}`
+            'Authorization': 'Bearer ' + passport.token 
         }
     })
-    const guilds = await guildsRaw.json()
-    return res.json({ success: true, guilds: guilds })
+    const guilds = await raw.json()
+    const guildsWithPerms = []
+    for (let i = 0; i < guilds.length; i++) {
+        if (guilds[i].permissions & 8) {
+            guildsWithPerms.push(guilds[i])
+        }
+    }
+    return res.json({ success: true, guilds: guildsWithPerms })
 })
 
-app.get('/api/settings/userRoleId/set', async (req, res) => {
+app.post('/api/settings/userroleid/set', async (req, res) => {
     const { userRoleId } = req.body
     try {
         await database.setUserRoleId(userRoleId)
@@ -499,7 +515,7 @@ app.get('/api/user/guild/roles/get', async (req, res) => {
     const { guildId } = await database.getSiteSettings()
     const raw = await fetch(`${API_ENDPOINT}/guilds/${guildId}/roles`, {
         headers: {
-            Authorization: `Bearer ${passport.token}`
+            'Authorization': `Bearer ${passport.token}`
         }
     })
     const roles = await raw.json()
@@ -516,7 +532,7 @@ app.post('/api/settings/userRoleId/set', async (req, res) => {
     return res.json({ success: true })
 })
 
-app.post('/api/settings/adminRoleId/set', async (req, res) => {
+app.post('/api/settings/adminroleid/set', async (req, res) => {
     const { id } = req.body
     try {
         await database.setAdminRoleId(id)
