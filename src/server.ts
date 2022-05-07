@@ -209,6 +209,11 @@ app.get('/settings', async (req, res) => {
     }
 })
 
+app.get('/setup', async (req, res) => { 
+    res.sendFile(path.join(__dirname,'web/setup.html'))
+    
+})
+
 
 
 app.get('/api/users/:username', async (req, res) => {
