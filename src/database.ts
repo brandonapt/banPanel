@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 import { getIdFromUsername, getUsernameFromId } from "noblox.js";
 // massive poggers
 
-mongoose.connect('mongodb+srv://brandon:brandon123@cluster0.6oieu.mongodb.net/banel').catch(console.error);
+mongoose.connect('mongodb://localhost:27017/banPanel').catch(console.error);
  const User = model("User", new Schema({
     username: String,
     userId: Number,
