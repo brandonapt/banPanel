@@ -1,4 +1,4 @@
-join the discord server to stay in-the-know on releasew!!! https://discord.gg/etnGzxQpW6
+# BANEL HAS MERGED WITH TOVY!! https://discord.gg/pTm5mGtZ2G
 
 # banPanel
 a website-roblox ban panel to ban users, view current ingame users, and more!
